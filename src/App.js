@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification';
 import blogService from './services/blogs'
 import loginService from './services/login';
 
@@ -11,6 +12,8 @@ const App = () => {
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
   const [user, setUser] = useState(null);
+  const [notificationMessage, setNotificationMessage] = useState('');
+  const [isError, setIsError] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -24,9 +27,18 @@ const App = () => {
       setUser(user);
       setUsername('');
       setPassword('');
+      setIsError(false);
+      setNotificationMessage(`Successfully logged in user ${user.name}`);
+      setTimeout(() => {
+        setNotificationMessage('');
+      }, 5000);
     } catch (exception) {
-
-      console.error('Wrong credentials');
+      setIsError(true);
+      setNotificationMessage('Wrong username or password');
+      setTimeout(() => {
+        setNotificationMessage('');
+      }, 5000);
+      console.error('Wrong username or password');
     }
   };
 
@@ -35,6 +47,11 @@ const App = () => {
 
     window.localStorage.removeItem('loggedInUser');
     setUser(null);
+    setIsError(false);
+    setNotificationMessage('Successfully logged out');
+    setTimeout(() => {
+      setNotificationMessage('');
+    }, 5000);
   };
 
   const handleCreateBlog = async e => {
@@ -46,7 +63,20 @@ const App = () => {
       url
     };
 
-    blogService.addBlog(newBlog);
+    try {
+      const blog = await blogService.addBlog(newBlog);
+      setIsError(false);
+      setNotificationMessage(`The new blog "${blog.title}" by ${blog.author || 'author undefined'} was added`);
+      setTimeout(() => {
+        setNotificationMessage('');
+      }, 5000);
+    } catch (error) {
+      setIsError(true);
+      setNotificationMessage('Failed to add blog');
+      setTimeout(() => {
+        setNotificationMessage('');
+      }, 5000);
+    }
 
     setTitle('');
     setAuthor('');
@@ -54,9 +84,20 @@ const App = () => {
   }
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+    const getAndSetBlogs = async () => {
+      try {
+        const blogs = await blogService.getAll();
+        setBlogs(blogs);
+      } catch (error) {
+        setIsError(true);
+        setNotificationMessage('Failed to fetch blogs from the server');
+        setTimeout(() => {
+          setNotificationMessage('');
+        }, 5000);
+        console.error('Failed to fetch blogs from the server');
+      }
+    };
+    getAndSetBlogs();
   }, [])
 
   useEffect(() => {
@@ -73,6 +114,7 @@ const App = () => {
     return (
       <div>
         <h2>Please login to the app</h2>
+        <Notification isError={isError} message={notificationMessage} />
         <form onSubmit={handleLogin}>
           Username
           <input 
@@ -96,6 +138,7 @@ const App = () => {
   return (
     <div>
       <h2>Blogs</h2>
+      <Notification isError={isError} message={notificationMessage} />
       <p>{user.name} is logged in</p>
       <button onClick={handleLogout}>Logout</button>
       {blogs.map(blog =>
