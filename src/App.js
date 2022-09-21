@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
+import NewBlogForm from './components/NewBlogForm';
 import Notification from './components/Notification';
+import Togglable from './components/Togglable';
 import blogService from './services/blogs'
 import loginService from './services/login';
 
@@ -15,6 +17,9 @@ const App = () => {
   const [notificationMessage, setNotificationMessage] = useState('');
   const [isError, setIsError] = useState(false);
 
+  const onChangeMaker = (callback) => ({ target }) => callback(target.value);
+  const newBlogFormRef = useRef();
+  
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -54,17 +59,42 @@ const App = () => {
     }, 5000);
   };
 
-  const handleCreateBlog = async e => {
-    e.preventDefault();
+  // const handleCreateBlog = async e => {
+  //   e.preventDefault();
 
-    const newBlog = {
-      title,
-      author,
-      url
-    };
+  //   const newBlog = {
+  //     title,
+  //     author,
+  //     url
+  //   };
+
+  //   try {
+  //     newBlogFormRef.current.toggleVisibility();
+  //     const blog = await blogService.addBlog(newBlog);
+  //     setIsError(false);
+  //     setNotificationMessage(`The new blog "${blog.title}" by ${blog.author || 'author undefined'} was added`);
+  //     setTimeout(() => {
+  //       setNotificationMessage('');
+  //     }, 5000);
+  //   } catch (error) {
+  //     setIsError(true);
+  //     setNotificationMessage('Failed to add blog');
+  //     setTimeout(() => {
+  //       setNotificationMessage('');
+  //     }, 5000);
+  //     console.error(error.message);
+  //   }
+
+  //   setTitle('');
+  //   setAuthor('');
+  //   setUrl('');
+  // }
+
+  const addBlog = async (blogObj) => {
+    newBlogFormRef.current.toggleVisibility();
 
     try {
-      const blog = await blogService.addBlog(newBlog);
+      const blog = await blogService.addBlog(blogObj);
       setIsError(false);
       setNotificationMessage(`The new blog "${blog.title}" by ${blog.author || 'author undefined'} was added`);
       setTimeout(() => {
@@ -76,12 +106,9 @@ const App = () => {
       setTimeout(() => {
         setNotificationMessage('');
       }, 5000);
+      console.error(error.message);
     }
-
-    setTitle('');
-    setAuthor('');
-    setUrl('');
-  }
+  };
 
   useEffect(() => {
     const getAndSetBlogs = async () => {
@@ -144,7 +171,13 @@ const App = () => {
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
-      <h2>Create New Blog</h2>
+      <Togglable buttonLabel="New Note" ref={newBlogFormRef}>
+        <NewBlogForm 
+        addBlog={addBlog}
+        onChangeMaker={onChangeMaker}
+        />
+      </Togglable>
+      {/* <h2>Create New Blog</h2>
       <form onSubmit={handleCreateBlog}>
         title:
         <input 
@@ -168,7 +201,7 @@ const App = () => {
         onChange={({ target }) => setUrl(target.value)}
         />
         <button type="submit">Create</button>
-      </form>
+      </form> */}
     </div>
   )
 }
