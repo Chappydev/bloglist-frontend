@@ -154,7 +154,7 @@ const App = () => {
       <Notification isError={isError} message={notificationMessage} />
       <p>{user.name} is logged in</p>
       <button onClick={handleLogout}>Logout</button>
-      {blogs.map(blog =>
+      {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
         <Blog key={blog.id} blog={blog} addLike={addLike} />
       )}
       <Togglable buttonLabel="New Note" ref={newBlogFormRef}>
