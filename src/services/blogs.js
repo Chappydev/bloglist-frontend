@@ -8,8 +8,8 @@ const setToken = newToken => {
 };
 
 const getAll = () => {
-  const request = axios.get(baseUrl)
-  return request.then(response => response.data)
+  const request = axios.get(baseUrl);
+  return request.then(response => response.data);
 };
 
 const addBlog = async (blogObj) => {
@@ -34,4 +34,16 @@ const updateBlog = async (updatedBlog) => {
   }
 };
 
-export default { getAll, setToken, addBlog, updateBlog };
+const deleteBlog = async (blogToDelete) => {
+  const config = {
+    headers: { Authorization: token }
+  };
+
+  try {
+    await axios.delete(`${baseUrl}/${blogToDelete.id}`, config);
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
+export default { getAll, setToken, addBlog, updateBlog, deleteBlog };

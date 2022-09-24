@@ -24,7 +24,7 @@ const App = () => {
       const user = await loginService.login({
         username, password
       });
-
+      blogService.setToken(user.token);
       window.localStorage.setItem('loggedInUser', JSON.stringify(user));
       setUser(user);
       setUsername('');
@@ -96,6 +96,25 @@ const App = () => {
     }
   };
 
+  const deleteBlog = async (blog) => {
+    try { 
+      await blogService.deleteBlog(blog);
+      setBlogs(blogs.filter(e => e.id !== blog.id));
+      setIsError(false);
+      setNotificationMessage(`${blog.title} was successfully removed`);
+      setTimeout(() => {
+        setNotificationMessage('');
+      }, 5000);
+    } catch (error) {
+      setIsError(true);
+      setNotificationMessage('Failed to remove blog');
+      setTimeout(() => {
+        setNotificationMessage('');
+      }, 5000);
+      console.error(error.message);
+    }
+  };
+
   useEffect(() => {
     const getAndSetBlogs = async () => {
       try {
@@ -155,7 +174,7 @@ const App = () => {
       <p>{user.name} is logged in</p>
       <button onClick={handleLogout}>Logout</button>
       {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} addLike={addLike} />
+        <Blog key={blog.id} user={user} blog={blog} deleteBlog={deleteBlog} addLike={addLike} />
       )}
       <Togglable buttonLabel="New Note" ref={newBlogFormRef}>
         <NewBlogForm 
