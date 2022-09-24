@@ -18,3 +18,8 @@
   background-color: pink;
   border-color: red;
 }
+
+.blog-container {
+  border: 1px solid black;
+  margin-top: 1em;
+}

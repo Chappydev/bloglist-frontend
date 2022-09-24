@@ -56,42 +56,12 @@ const App = () => {
     }, 5000);
   };
 
-  // const handleCreateBlog = async e => {
-  //   e.preventDefault();
-
-  //   const newBlog = {
-  //     title,
-  //     author,
-  //     url
-  //   };
-
-  //   try {
-  //     newBlogFormRef.current.toggleVisibility();
-  //     const blog = await blogService.addBlog(newBlog);
-  //     setIsError(false);
-  //     setNotificationMessage(`The new blog "${blog.title}" by ${blog.author || 'author undefined'} was added`);
-  //     setTimeout(() => {
-  //       setNotificationMessage('');
-  //     }, 5000);
-  //   } catch (error) {
-  //     setIsError(true);
-  //     setNotificationMessage('Failed to add blog');
-  //     setTimeout(() => {
-  //       setNotificationMessage('');
-  //     }, 5000);
-  //     console.error(error.message);
-  //   }
-
-  //   setTitle('');
-  //   setAuthor('');
-  //   setUrl('');
-  // }
-
   const addBlog = async (blogObj) => {
     newBlogFormRef.current.toggleVisibility();
 
     try {
       const blog = await blogService.addBlog(blogObj);
+      setBlogs(blogs.concat(blog));
       setIsError(false);
       setNotificationMessage(`The new blog "${blog.title}" by ${blog.author || 'author undefined'} was added`);
       setTimeout(() => {
@@ -100,6 +70,25 @@ const App = () => {
     } catch (error) {
       setIsError(true);
       setNotificationMessage('Failed to add blog');
+      setTimeout(() => {
+        setNotificationMessage('');
+      }, 5000);
+      console.error(error.message);
+    }
+  };
+
+  const addLike = async (blog) => {
+    try { 
+      const updatedBlog = await blogService.updateBlog(blog);
+      setBlogs(blogs.map(e => e.id === blog.id ? updatedBlog : e));
+      setIsError(false);
+      setNotificationMessage(`${updatedBlog.title} now has ${updatedBlog.likes} likes`);
+      setTimeout(() => {
+        setNotificationMessage('');
+      }, 5000);
+    } catch (error) {
+      setIsError(true);
+      setNotificationMessage('Failed to update likes');
       setTimeout(() => {
         setNotificationMessage('');
       }, 5000);
@@ -166,7 +155,7 @@ const App = () => {
       <p>{user.name} is logged in</p>
       <button onClick={handleLogout}>Logout</button>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} addLike={addLike} />
       )}
       <Togglable buttonLabel="New Note" ref={newBlogFormRef}>
         <NewBlogForm 
@@ -174,31 +163,6 @@ const App = () => {
         onChangeMaker={onChangeMaker}
         />
       </Togglable>
-      {/* <h2>Create New Blog</h2>
-      <form onSubmit={handleCreateBlog}>
-        title:
-        <input 
-        type="text"
-        value={title}
-        name="title"
-        onChange={({ target }) => setTitle(target.value)}
-        />
-        author:
-        <input 
-        type="text"
-        value={author}
-        name="author"
-        onChange={({ target }) => setAuthor(target.value)}
-        />
-        url:
-        <input 
-        type="text"
-        value={url}
-        name="url"
-        onChange={({ target }) => setUrl(target.value)}
-        />
-        <button type="submit">Create</button>
-      </form> */}
     </div>
   )
 }
