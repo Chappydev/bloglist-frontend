@@ -30,6 +30,7 @@ const NewBlogForm = ({
       <form onSubmit={handleCreateBlog}>
           title:
         <input
+          className='title-input'
           type="text"
           value={title}
           name="title"
@@ -37,6 +38,7 @@ const NewBlogForm = ({
         />
           author:
         <input
+          className='author-input'
           type="text"
           value={author}
           name="author"
@@ -44,6 +46,7 @@ const NewBlogForm = ({
         />
           url:
         <input
+          className='url-input'
           type="text"
           value={url}
           name="url"
