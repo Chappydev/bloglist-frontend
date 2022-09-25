@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 const NewBlogForm = ({
@@ -12,7 +12,7 @@ const NewBlogForm = ({
   const handleCreateBlog = async e => {
     e.preventDefault();
 
-    
+
     addBlog({
       title,
       author,
@@ -22,37 +22,37 @@ const NewBlogForm = ({
     setTitle('');
     setAuthor('');
     setUrl('');
-  }
+  };
 
   return (
     <div>
       <h2>Create New Blog</h2>
-        <form onSubmit={handleCreateBlog}>
+      <form onSubmit={handleCreateBlog}>
           title:
-          <input 
+        <input
           type="text"
           value={title}
           name="title"
           onChange={onChangeMaker(setTitle)}
-          />
+        />
           author:
-          <input 
+        <input
           type="text"
           value={author}
           name="author"
           onChange={onChangeMaker(setAuthor)}
-          />
+        />
           url:
-          <input 
+        <input
           type="text"
           value={url}
           name="url"
           onChange={onChangeMaker(setUrl)}
-          />
-          <button type="submit">Create</button>
-        </form>
-      </div>
-  )
+        />
+        <button type="submit">Create</button>
+      </form>
+    </div>
+  );
 };
 
 NewBlogForm.propTypes = {

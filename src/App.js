@@ -1,13 +1,13 @@
-import { useState, useEffect, useRef } from 'react'
-import Blog from './components/Blog'
+import { useState, useEffect, useRef } from 'react';
+import Blog from './components/Blog';
 import NewBlogForm from './components/NewBlogForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
-import blogService from './services/blogs'
+import blogService from './services/blogs';
 import loginService from './services/login';
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
@@ -16,7 +16,7 @@ const App = () => {
 
   const onChangeMaker = (callback) => ({ target }) => callback(target.value);
   const newBlogFormRef = useRef();
-  
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -78,7 +78,7 @@ const App = () => {
   };
 
   const addLike = async (blog) => {
-    try { 
+    try {
       const updatedBlog = await blogService.updateBlog(blog);
       setBlogs(blogs.map(e => e.id === blog.id ? updatedBlog : e));
       setIsError(false);
@@ -97,7 +97,7 @@ const App = () => {
   };
 
   const deleteBlog = async (blog) => {
-    try { 
+    try {
       await blogService.deleteBlog(blog);
       setBlogs(blogs.filter(e => e.id !== blog.id));
       setIsError(false);
@@ -130,7 +130,7 @@ const App = () => {
       }
     };
     getAndSetBlogs();
-  }, [])
+  }, []);
 
   useEffect(() => {
     const loggedInUserJSON = window.localStorage.getItem('loggedInUser');
@@ -149,22 +149,22 @@ const App = () => {
         <Notification isError={isError} message={notificationMessage} />
         <form onSubmit={handleLogin}>
           Username
-          <input 
-          type="text"
-          value={username}
-          name="username"
-          onChange={({ target }) => setUsername(target.value)}
+          <input
+            type="text"
+            value={username}
+            name="username"
+            onChange={({ target }) => setUsername(target.value)}
           />
           Password
-          <input 
-          type="text"
-          name="password"
-          onChange={({ target }) => setPassword(target.value)}
+          <input
+            type="text"
+            name="password"
+            onChange={({ target }) => setPassword(target.value)}
           />
           <button type="submit">Login</button>
         </form>
       </div>
-    )
+    );
   }
 
   return (
@@ -177,13 +177,13 @@ const App = () => {
         <Blog key={blog.id} user={user} blog={blog} deleteBlog={deleteBlog} addLike={addLike} />
       )}
       <Togglable buttonLabel="New Note" ref={newBlogFormRef}>
-        <NewBlogForm 
-        addBlog={addBlog}
-        onChangeMaker={onChangeMaker}
+        <NewBlogForm
+          addBlog={addBlog}
+          onChangeMaker={onChangeMaker}
         />
       </Togglable>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
