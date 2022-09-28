@@ -54,5 +54,18 @@ describe('Blog app', function() {
 
       cy.contains('Title... Author...');
     });
+
+    it('A blog can be liked', function() {
+      cy.contains('New Note').click();
+      cy.get('.title-input').type('Title...');
+      cy.get('.author-input').type('Author...');
+      cy.get('.url-input').type('Url...');
+      cy.get('#submit-note').click();
+
+      cy.contains('Title... Author...').parent().find('button').click();
+      cy.contains('like').click();
+      cy.contains('Title... now has 1 likes')
+      cy.contains('likes: 1');
+    });
   });
 });
