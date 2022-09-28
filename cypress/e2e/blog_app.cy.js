@@ -85,5 +85,20 @@ describe('Blog app', function() {
         .and('have.css', 'color', 'rgb(0, 128, 0)');
       cy.should('not.contain', 'Title... Author...');
     });
+
+    it('The blogs are ordered by # of likes', function() {
+      cy.contains('New Note').click();
+      cy.get('.title-input').type('Blog with most likes');
+      cy.get('.author-input').type('Popular Author');
+      cy.get('.url-input').type('Url...');
+      cy.get('#submit-note').click();
+
+      cy.contains('Blog with most likes Popular Author').parent().find('button').click();
+      cy.contains('Blog with most likes Popular Author').parent().find('button').eq(1).click();
+      cy.contains('likes: 1');
+
+      cy.get('.blog-container').eq(0).should('contain', 'Blog with most likes');
+      cy.get('.blog-container').eq(1).should('contain', 'Title... Author...');
+    });
   });
 });
