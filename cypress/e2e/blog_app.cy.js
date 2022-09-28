@@ -37,4 +37,22 @@ describe('Blog app', function() {
       cy.get('html').should('not.contain', 'George Frenulum is logged in');
     });
   });
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.get('#username').type('georgie');
+      cy.get('#password').type('password');
+      cy.get('#login-button').click();
+    });
+
+    it('A blog can be created', function() {
+      cy.contains('New Note').click();
+      cy.get('.title-input').type('Title...');
+      cy.get('.author-input').type('Author...');
+      cy.get('.url-input').type('Url...');
+      cy.get('#submit-note').click();
+
+      cy.contains('Title... Author...');
+    });
+  });
 });

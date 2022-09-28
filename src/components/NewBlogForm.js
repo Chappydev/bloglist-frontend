@@ -52,7 +52,7 @@ const NewBlogForm = ({
           name="url"
           onChange={onChangeMaker(setUrl)}
         />
-        <button type="submit">Create</button>
+        <button id="submit-note" type="submit">Create</button>
       </form>
     </div>
   );
